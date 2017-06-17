@@ -50,65 +50,73 @@ This is used to make the keyboard behave mostly like a **num pad keyboard**.
 - All sticky keys have a timeout of 3 seconds.
 
 */
+
+// layers
 #define BASE   0
 #define KEYPAD 1
 #define FN     2
 
-#define MACRO_TMUX_ESC        10
-#define MACRO_TMUX_PASTE      11
-#define MACRO_OSX_COPY        12
-#define MACRO_OSX_PASTE       13
+// macros
+#define MACRO_TMUX_LDR        10
+#define MACRO_COPY            11
+#define MACRO_PASTE           12
+#define MACRO_CLIPIT          13
+#define MACRO_TMUX_SCROLL     14
+#define MACRO_ROFI            15
 
-#define M_TESC   M(MACRO_TMUX_ESC)
-#define M_TPASTE M(MACRO_TMUX_PASTE)
-#define M_OSXCPY M(MACRO_OSX_COPY)
-#define M_OSXPST M(MACRO_OSX_PASTE)
+#define M_TLDR   M(MACRO_TMUX_LDR)
+#define M_CPY    M(MACRO_COPY)
+#define M_PST    M(MACRO_PASTE)
+#define M_CLPT   M(MACRO_CLIPIT)
+#define M_TSCL   M(MACRO_TMUX_SCROLL)
+#define M_RFI    M(MACRO_ROFI)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Keymap 0: Base Layer
  *
  * ,-----------------------------------------------------.           ,-----------------------------------------------------.
- * |        `~ |   1  |   2  |   3  |   4  |   5  | ESC  |           | Pwr  |   6  |   7  |   8  |   9  |   0  | - _       |
+ * | ESC       |   1  |   2  |   3  |   4  |   5  |   6  |           |  7   |   8  |   9  |   0  | - +  |  - _ |  BCKSPC   |
  * |-----------+------+------+------+------+-------------|           |------+------+------+------+------+------+-----------|
- * | Tab       |   Q  |   W  |   E  |   R  |   T  | F16  |           | F17  |   Y  |   U  |   I  |   O  |   P  | = +       |
- * |-----------+------+------+------+------+------| Meh  |           | Meh  |------+------+------+------+------+-----------|
+ * | Tab       |   Q  |   W  |   E  |   R  |   T  |M(0)  |           |PGUP  |   Y  |   U  |   I  |   O  |   P  |   ROFI    |
+ * |-----------+------+------+------+------+------|(Meh) |           |(Meh) |------+------+------+------+------+-----------|
  * | \ (Ctrl)  |   A  |   S  |   D  |   F  |   G  |------|           |------|   H  |   J  |   K  |   L  |   ;  | ' " (Ctrl)|
- * |-----------+------+------+------+------+------| F18  |           | F19  |------+------+------+------+------+-----------|
- * |  LShift   |   Z  |   X  |   C  |   V  |   B  | Hyper|           | Hyper|   N  |   M  |   ,  |   .  |   /  |   RShift  |
+ * |-----------+------+------+------+------+------| F18  |           |PGDWN |------+------+------+------+------+-----------|
+ * |  LShift   |   Z  |   X  |   C  |   V  |   B  |(Hyper|           |Hyper)|   N  |   M  |   ,  |   .  |   /  |   RShift  |
  * `-----------+------+------+------+------+-------------'           `-------------+------+------+------+------+-----------'
  *     | FN    | KPAD |LCtrl | LAlt | LGui |                                       | RGui | RAlt | RCtrl| KPAD |    FN |
+ *     |       |      |      |      |      |                                       |      |      |  / [ |  / ] |       |
  *     `-----------------------------------'                                       `-----------------------------------'
  *                                         ,-------------.           ,-------------.
- *                                         | M(0) | M(1) |           | M(2) | M(3) |
+ *                                         | M(1) | M(2) |           | M(3) | M(4) |
  *                                  ,------|------|------|           |------+------+------.
  *                                  |      |      | Home |           | PgUp |      |      |
  *                                  |Backsp| Del  |------|           |------| Enter| Space|
  *                                  |      |      | End  |           | PgDn |      |      |
  *                                  `--------------------'           `--------------------'
  *
- * M(0) = Ctrk+A Esc
- *        (this is used to issue the Esc key to the Tmux application)
- * M(1) = Ctrk+A P
- *        (this is used to issue the Paste key to the Tmux application)
- * M(2) = Cmd+C
- * M(3) = Cmd+V
+ * M(0) = Ctrk+A (T-Mux leader)
+ * M(1) = Ctrl+C (Copy)
+ * M(2) = Ctrl+C (Paste)
+ * M(3) = Ctrl+Alt+H (Clipt paste menu)
+ * M(4) = Ctrl+A+[ (T-Mux scroll mode)
+ * M(5) = LGui+Tab (launch rofi)
  */
 [BASE]=KEYMAP(//left half
-              KC_GRV,         KC_1,       KC_2,     KC_3,           KC_4,       KC_5,     KC_ESC,
-              KC_TAB,         KC_Q,       KC_W,     KC_E,           KC_R,       KC_T,     MEH_T(KC_F16),
+              KC_ESC,         KC_1,       KC_2,     KC_3,           KC_4,       KC_5,     KC_6,
+              KC_TAB,         KC_Q,       KC_W,     KC_E,           KC_R,       KC_T,     MEH_T(M_TLDR),
               CTL_T(KC_BSLS), KC_A,       KC_S,     KC_D,           KC_F,       KC_G,
               KC_FN2,         KC_Z,       KC_X,     KC_C,           KC_V,       KC_B,     ALL_T(KC_F18),
               KC_FN1,         TG(KEYPAD), KC_LCTRL, KC_LALT,        KC_LGUI,
-                                                                                M_TESC,   M_TPASTE,
+                                                                                M_CPY,    M_PST,
                                                                                           KC_HOME,
                                                                     KC_BSPC,    KC_DELT,  KC_END,
               //right half
-              KC_POWER,       KC_6,       KC_7,     KC_8,           KC_9,       KC_0,     KC_MINS,
-              MEH_T(KC_F17),  KC_Y,       KC_U,     KC_I,           KC_O,       KC_P,     KC_EQL,
+              KC_7,           KC_8,       KC_9,     KC_0,           KC_MINS,    KC_EQL,   KC_BSPC,
+              MEH_T(KC_PGUP), KC_Y,       KC_U,     KC_I,           KC_O,       KC_P,     M_RFI,
                               KC_H,       KC_J,     KC_K,           KC_L,       KC_SCLN,  CTL_T(KC_QUOT),
-              ALL_T(KC_F19),  KC_N,       KC_M,     KC_COMM,        KC_DOT,     KC_SLSH,  KC_FN2,
+              ALL_T(KC_PGDN), KC_N,       KC_M,     KC_COMM,        KC_DOT,     KC_SLSH,  KC_FN2,
                               KC_RGUI,    KC_RALT,  CTL_T(KC_LBRC), KC_FN3,     KC_FN1,
-              M_OSXCPY,       M_OSXPST,
+              M_CLPT,         M_TSCL,
               KC_PGUP,
               KC_PGDN,        KC_ENT,     KC_SPC),
 
@@ -155,7 +163,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Keymap 2: Functions Layer
  *
  * ,-----------------------------------------------------.           ,-----------------------------------------------------.
- * |           |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |           |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |  Vol. Up  |
+ * |     ` ~   |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |           |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |  Vol. Up  |
  * |-----------+------+------+------+------+-------------|           |------+------+------+------+------+------+-----------|
  * |           | Stop |  Rw  |  Rec |  FF  |      | XXXX |           | XXXX |      |      |      |      |      | Vol. Down |
  * |-----------+------+------+------+------+------| XXXX |           | XXXX |------+------+------+------+------+-----------|
@@ -176,7 +184,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * XXX = These keys are transparent keys that, when pressed, they issue the key from the previous layer.
  */
 [FN]=KEYMAP(//left half
-            KC_NO,   KC_F1,          KC_F2,               KC_F3,               KC_F4,                 KC_F5,  KC_F6,
+            KC_GRV,  KC_F1,          KC_F2,               KC_F3,               KC_F4,                 KC_F5,  KC_F6,
             KC_NO,   KC_MEDIA_STOP,  KC_MEDIA_REWIND,     KC_MEDIA_SELECT,     KC_MEDIA_FAST_FORWARD, KC_NO,  KC_TRNS,
             KC_CAPS, KC_MEDIA_EJECT, KC_MEDIA_PREV_TRACK, KC_MEDIA_PLAY_PAUSE, KC_MEDIA_NEXT_TRACK,   KC_NO,
             KC_LSFT, KC_NO,          KC_NO,               KC_NO,               KC_NO,                 KC_NO,  KC_TRNS,
@@ -195,7 +203,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_NO,   KC_NO,          KC_NO)};
 
 const uint16_t PROGMEM fn_actions[] = {
-  [1] = ACTION_LAYER_ONESHOT(FN),
+  [1] = ACTION_LAYER_ONESHOT(FN), // oneshot function key
   [2] = ACTION_MODS_ONESHOT(MOD_LSFT),  // Sticky shift light. Tap for the next keypress to be shifted. Hold for regular shift.
   [3] = ACTION_LAYER_TAP_KEY(KEYPAD, KC_RBRC),
 };
@@ -203,26 +211,40 @@ const uint16_t PROGMEM fn_actions[] = {
 const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
   // MACRODOWN only works in this function
   switch(id) {
-    case MACRO_TMUX_ESC:
+    case MACRO_TMUX_LDR:
       if (record->event.pressed) {
-        return MACRO(D(LCTRL), T(A), U(LCTRL), D(ESC), END);
+        return MACRO(D(LCTRL), T(A), END);
       }
-      return MACRO(U(ESC), END);
-    case MACRO_TMUX_PASTE:
+      return MACRO(U(LCTRL), END);
+
+    case MACRO_COPY:
       if (record->event.pressed) {
-        return MACRO(D(LCTRL), T(A), U(LCTRL), D(P), END);
+        return MACRO(D(LCTRL), D(C), END);
       }
-      return MACRO(U(P), END);
-    case MACRO_OSX_COPY:
+      return MACRO(U(C), U(LCTRL), END);
+
+    case MACRO_PASTE:
       if (record->event.pressed) {
-        return MACRO(D(LGUI), D(C), END);
+        return MACRO(D(LCTRL), D(V), END);
       }
-      return MACRO(U(C), U(LGUI), END);
-    case MACRO_OSX_PASTE:
+      return MACRO(U(V), U(LCTRL), END);
+
+    case MACRO_CLIPIT:
       if (record->event.pressed) {
-        return MACRO(D(LGUI), D(V), END);
+        return MACRO(D(LCTRL), D(LALT), T(H), END);
       }
-      return MACRO(U(V), U(LGUI), END);
+      return MACRO(U(LALT), U(LCTRL), END);
+
+    case MACRO_TMUX_SCROLL:
+      if (record->event.pressed) {
+        return MACRO(D(LCTRL), T(A), U(LCTRL), D(LBRC), END);
+      }
+      return MACRO(U(LBRC), END);
+    case MACRO_ROFI:
+      if (record->event.pressed) {
+        return MACRO(D(LGUI), T(TAB), END);
+      }
+      return MACRO(U(LGUI), END);
   }
   return MACRO_NONE;
 };
