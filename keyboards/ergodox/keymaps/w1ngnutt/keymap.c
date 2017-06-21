@@ -71,6 +71,8 @@ This is used to make the keyboard behave mostly like a **num pad keyboard**.
 #define M_TSCL   M(MACRO_TMUX_SCROLL)
 #define M_RFI    M(MACRO_ROFI)
 
+// layout available at: http://www.keyboard-layout-editor.com/#/gists/e1af6e3b6d43cf87d23cc2d8db1a2019
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Keymap 0: Base Layer
  *
