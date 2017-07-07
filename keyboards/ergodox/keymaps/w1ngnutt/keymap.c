@@ -53,7 +53,7 @@ This is used to make the keyboard behave mostly like a **num pad keyboard**.
 
 // layers
 #define BASE   0
-#define KEYPAD 1
+#define MOUSE  1
 #define FN     2
 
 // macros
@@ -83,7 +83,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |-----------+------+------+------+------+------|      |           | Meh  |------+------+------+------+------+-----------|
  * | \ (Ctrl)  |   A  |   S  |   D  |   F  |   G  |------|           |------|   H  |   J  |   K  |   L  |   ;  | ' " (Ctrl)|
  * |-----------+------+------+------+------+------| [{   |           | ]}   |------+------+------+------+------+-----------|
- * |  LShift   |   Z  |   X  |   C  |   V  |   B  |      |           |Hyper)|   N  |   M  |   ,  |   .  |   /  |   RShift  |
+ * |  LShift   |   Z  |   X  |   C  |   V  |   B  |(Hyper|           |Hyper)|   N  |   M  |   ,  |   .  |   /  |   RShift  |
  * `-----------+------+------+------+------+-------------'           `-------------+------+------+------+------+-----------'
  *     | FN    | KPAD |LCtrl | LAlt | LGui |                                       | RGui | RAlt | RCtrl| KPAD |    FN |
  *     |       |      |      |      |      |                                       |      |      |  / [ |  / ] |       |
@@ -107,8 +107,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
               KC_ESC,         KC_1,       KC_2,     KC_3,           KC_4,       KC_5,     KC_6,
               KC_GRV,         KC_Q,       KC_W,     KC_E,           KC_R,       KC_T,     M_TLDR,
               CTL_T(KC_BSLS), KC_A,       KC_S,     KC_D,           KC_F,       KC_G,
-              KC_FN2,         KC_Z,       KC_X,     KC_C,           KC_V,       KC_B,     KC_LBRC,
-              KC_FN1,         TG(KEYPAD), KC_LCTRL, KC_LALT,        KC_LGUI,
+              KC_FN2,         KC_Z,       KC_X,     KC_C,           KC_V,       KC_B,     ALL_T(KC_LBRC),
+              KC_FN1,         TG(MOUSE), KC_LCTRL, KC_LALT,        KC_LGUI,
                                                                                 M_CPY,    M_PST,
                                                                                           M_CLPT,
                                                                     KC_BSPC,    KC_TAB,   M_TSCL,
@@ -125,15 +125,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Keymap 1: KeyPad Layer
  *
  * ,-----------------------------------------------------.           ,-----------------------------------------------------.
- * |           |      | LClk | RClk | MClk |      |      |           | BTab | Clear|   /  |   *  |   ^  |   (  |           |
+ * |           |      |      |      |      |      |      |           |      |      |      |      |      |      |           |
  * |-----------+------+------+------+------+-------------|           |------+------+------+------+------+------+-----------|
- * | M.Accel 2 |      |ScrlUp|  U   |ScrlDn|      |      |           | Tab  |   7  |   8  |   9  |   +  |   )  |           |
+ * |           |      |      |      |      |      |      |           |      |      | LClk | RClk | MClk |      |           |
  * |-----------+------+------+------+------+------|      |           |      |------+------+------+------+------+-----------|
- * | M.Accel 1 |      |   L  |  D   |  R   |      |------|           |------|   4  |   5  |   6  |   -  |      |           |
- * |-----------+------+------+------+------+------|      |           |Return|------+------+------+------+------+-----------|
- * | M.Accel 0 |      |ScrlL |      |ScrlR |      |      |           |      |   1  |   2  |   3  |   =  |      |           |
+ * |           |      |      |      |      |      |------|           |------|   L  |   D  |   U  |   R  |      |           |
+ * |-----------+------+------+------+------+------|      |           |      |------+------+------+------+------+-----------|
+ * |           |      |      |      |      |      |      |           |      |ScrlL |ScrlD |ScrlU |ScrlR |      |           |
  * `-----------+------+------+------+------+-------------'           `-------------+------+------+------+------+-----------'
- *     |       | XXXX |      |      |      |                                       |   0  |   .  |   ,  | XXXX |       |
+ *     |  XXXX | XXXX | XXXX | XXXX | XXXX |                                       | XXXX | XXXX | XXXX | XXXX | XXXX  |
  *     `-----------------------------------'                                       `-----------------------------------'
  *                                         ,-------------.           ,-------------.
  *                                         |      |      |           |      |      |
@@ -143,24 +143,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                  |      |      |      |           |      | XXXX |      |
  *                                  `--------------------'           `--------------------'
  */
-[KEYPAD]=KEYMAP(//left half
-                KC_NO,        KC_NO,    KC_MS_BTN1,    KC_MS_BTN2,     KC_MS_BTN3,     KC_NO,   KC_NO,
-                KC_MS_ACCEL2, KC_NO,    KC_MS_WH_UP,   KC_MS_U,        KC_MS_WH_DOWN,  KC_NO,   KC_NO,
-                KC_MS_ACCEL1, KC_NO,    KC_MS_L,       KC_MS_D,        KC_MS_R,        KC_NO,
-                KC_MS_ACCEL0, KC_NO,    KC_MS_WH_LEFT, KC_NO,          KC_MS_WH_RIGHT, KC_NO,   KC_NO,
-                KC_NO,        KC_TRNS,  KC_NO,         KC_NO,          KC_NO,
-                                                                                       KC_NO,   KC_NO,
-                                                                                                KC_NO,
-                                                                       KC_NO,          KC_NO,   KC_NO,
+[MOUSE]=KEYMAP(//left half
+                KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+                KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+                KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+                KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
+                                  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+                                                                KC_NO,   KC_NO,
+                                                                         KC_NO,
+                                                         KC_NO, KC_NO,   KC_NO,
                 //right half
-                LSFT(KC_TAB), KC_CLEAR, KC_KP_SLASH,   KC_KP_ASTERISK, KC_CIRCUMFLEX,  KC_LPRN, KC_NO,
-                KC_TAB,       KC_KP_7,  KC_KP_8,       KC_KP_9,        KC_KP_PLUS,     KC_RPRN, KC_NO,
-                              KC_KP_4,  KC_KP_5,       KC_KP_6,        KC_KP_MINUS,    KC_NO,   KC_NO,
-                KC_KP_ENTER,  KC_KP_1,  KC_KP_2,       KC_KP_3,        KC_KP_EQUAL,    KC_NO,   KC_NO,
-                                        KC_KP_0,       KC_KP_DOT,      KC_KP_COMMA,    KC_TRNS, KC_NO,
-                KC_NO,        KC_NO,
-                KC_NO,
-                KC_NO,        KC_TRNS,  KC_NO),
+                KC_NO,  KC_NO,         KC_NO,         KC_NO,          KC_NO,          KC_NO,   KC_NO,
+                KC_NO,  KC_NO,         KC_MS_BTN1,    KC_MS_BTN2,     KC_MS_BTN3,     KC_NO,   KC_NO,
+                        KC_MS_L,       KC_MS_D,       KC_MS_U,        KC_MS_R,        KC_NO,   KC_NO,
+                KC_NO,  KC_MS_WH_LEFT, KC_MS_WH_DOWN, KC_MS_WH_UP,    KC_MS_WH_RIGHT, KC_NO,   KC_NO,
+                                       KC_TRNS,       KC_TRNS,        KC_TRNS,        KC_TRNS, KC_TRNS,
+                KC_TRNS, KC_TRNS,
+                KC_TRNS,
+                KC_TRNS, KC_TRNS,  KC_TRNS),
 
 /* Keymap 2: Functions Layer
  *
@@ -207,7 +207,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 const uint16_t PROGMEM fn_actions[] = {
   [1] = ACTION_LAYER_ONESHOT(FN), // oneshot function key
   [2] = ACTION_MODS_ONESHOT(MOD_LSFT),  // Sticky shift light. Tap for the next keypress to be shifted. Hold for regular shift.
-  [3] = ACTION_LAYER_TAP_KEY(KEYPAD, KC_RBRC),
+  [3] = ACTION_LAYER_TAP_KEY(MOUSE, KC_RBRC),
 };
 
 const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
@@ -268,8 +268,8 @@ void matrix_scan_user(void) {
   case BASE:
     current_layer = BASE;
     break;
-  case KEYPAD:
-    current_layer = KEYPAD;
+  case MOUSE:
+    current_layer = MOUSE;
     break;
   default:
     // none
@@ -277,7 +277,7 @@ void matrix_scan_user(void) {
   }
 
   // layer leds
-  if (current_layer == KEYPAD) {
+  if (current_layer == MOUSE) {
     ergodox_right_led_3_on();
   }
 
@@ -290,7 +290,7 @@ void matrix_scan_user(void) {
 
   // The function layer takes over other layers and we need to reflect that on the leds.
   // If the current layer is the BASE, we simply turn on the FN led, but if the current
-  // layer is the KEYPAD, than we must turn it off before turning on the FN led.
+  // layer is the MOUSE, than we must turn it off before turning on the FN led.
   if (layer == FN && !has_oneshot_layer_timed_out()) {
     ergodox_right_led_3_off();
     ergodox_right_led_2_on();
