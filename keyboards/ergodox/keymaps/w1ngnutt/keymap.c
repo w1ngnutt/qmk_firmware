@@ -8,12 +8,6 @@
 
 /*
 
-# Why this Layout
-
-This layout was based on Kinesis layout and other ErgoDox user layouts
-available. It's target to be used on a MacOS but I'm pretty sure it can be
-addapted to Windows and/or Linux easily.
-
 ## Function Key
 
 The `fn` key work almost like it would in any other keyboard with the exception
@@ -32,22 +26,10 @@ decided to do a semi-sticky version of `fn`. This way, I can press the  `fn`
 key with my pinky, release it and press the `1` key to issue an `F1` to the
 operating system.
 
-## Key-Pad Key
-
-The `key pad` key is a layout switch key. If pressed, it will put the keyboard
-on the _key pad layout_ and stay there until key is pressed again.
-
-This is used to make the keyboard behave mostly like a **num pad keyboard**.
-
 ## Notes
-- Regardless in which layout you are, keys from other layouts are not
-  accessible. This means that if you are on the _key pad layout_, the left hand
-  will be pretty much unusable.
-  Of course that like anything else, there are exceptions to this rule.
-  Modifiers should remain accessible throughout the layers.
 - The _shift key_ is, like the _function key_, also configured to have a sticky
   behavior.
-- All sticky keys have a timeout of 3 seconds.
+- All sticky keys have a timeout of 2 seconds.
 
 */
 
@@ -97,20 +79,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                  |Backsp| TAB  |------|           |------| Enter| Space|
  *                                  |      |      |  FN  |           | PgDn |      |      |
  *                                  `--------------------'           `--------------------'
- *
- * M(0) = Ctrk+A (T-Mux leader)
- * M(1) = Ctrl+C (Copy)
- * M(2) = Ctrl+C (Paste)
- * M(3) = Ctrl+Alt+H (Clipt paste menu)
- * M(4) = Ctrl+A+[ (T-Mux scroll mode)
- * M(5) = LGui+Tab (launch rofi)
 */
 [BASE]=KEYMAP(//left half
               KC_ESC,         KC_1,       KC_2,     KC_3,           KC_4,       KC_5,     KC_6,
               KC_GRV,         KC_Q,       KC_W,     KC_E,           KC_R,       KC_T,     M_TLDR,
               CTL_T(KC_CAPS), KC_A,       KC_S,     KC_D,           KC_F,       KC_G,
               KC_FN2,         KC_Z,       KC_X,     KC_C,           KC_V,       KC_B,     ALL_T(KC_LBRC),
-              KC_FN1,         TG(MOUSE), KC_LCTRL, KC_LALT,        KC_LGUI,
+              KC_FN1,         TG(MOUSE),  KC_LCTRL, KC_LALT,        KC_LGUI,
                                                                                 M_TPST,   KC_NO,
                                                                                           M_CLPT,
                                                                     KC_BSPC,    KC_TAB,   KC_FN1,
@@ -138,11 +113,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *     |  XXXX | XXXX | XXXX | XXXX | XXXX |                                       | XXXX | XXXX | XXXX | XXXX | XXXX  |
  *     `-----------------------------------'                                       `-----------------------------------'
  *                                         ,-------------.           ,-------------.
- *                                         |      |      |           |      |      |
+ *                                         |      |      |           | XXXX | XXXX |
  *                                  ,------|------|------|           |------+------+------.
- *                                  |      |      |      |           |      | XXXX |      |
- *                                  |      |      |------|           |------| XXXX |      |
- *                                  |      |      |      |           |      | XXXX |      |
+ *                                  |      |      |      |           | XXXX | XXXX | XXXX |
+ *                                  |      |      |------|           |------| XXXX | XXXX |
+ *                                  |      |      |      |           | XXXX | XXXX | XXXX |
  *                                  `--------------------'           `--------------------'
  */
 [MOUSE]=KEYMAP(//left half
