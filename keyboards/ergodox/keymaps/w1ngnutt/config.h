@@ -40,5 +40,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define DEBUG_MATRIX_SCAN_RATE
 #define ONESHOT_TAP_TOGGLE 2
 #define ONESHOT_TIMEOUT 2000
+#define IGNORE_MOD_TAP_INTERRUPT
 
 #endif
