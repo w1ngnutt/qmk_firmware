@@ -1,0 +1,229 @@
+#include QMK_KEYBOARD_H
+#include "debug.h"
+#include "action_layer.h"
+#include "action_util.h"
+#include "led.h"
+#include "keymap.h"
+#include "timer.h"
+
+/*
+
+## Function Key
+
+The `fn` key work almost like it would in any other keyboard with the exception
+it has a semi-sticky behavior. What does that mean?
+
+Well, if you press the `fn` and release it, the keyboard will be put on the
+_function layout_ and the next key stroke will be processed as if the `fn` key
+was pressed. Aftwards, the leyout get back to _normal_. If you hold `fn` and
+press any other key, when you release them, the keyboard leyout is back to
+_normal_.
+
+While pressing the `fn` with the left hand and strikeing the other keys on the
+right hand is farly easy, the same cannot being said for the other keys on the
+left side. So, instead of trying to do contorcionism with my left hand, I
+decided to do a semi-sticky version of `fn`. This way, I can press the  `fn`
+key with my pinky, release it and press the `1` key to issue an `F1` to the
+operating system.
+
+## Notes
+- The _shift key_ is, like the _function key_, also configured to have a sticky
+  behavior.
+- All sticky keys have a timeout of 2 seconds.
+
+*/
+
+// layers
+#define BASE   0
+#define MOUSE  1
+#define FN     2
+
+// macros
+#define M_TLDR   RCTL(KC_A)
+#define M_CLPT   LCA(KC_H)
+#define M_RFI    LGUI(KC_TAB)
+#define M_TPST   LCA(KC_V)
+
+// layout available at: http://www.keyboard-layout-editor.com/#/gists/e1af6e3b6d43cf87d23cc2d8db1a2019
+
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+/* Keymap 0: Base Layer
+ *
+ * ,-----------------------------------------------------.           ,-----------------------------------------------------.
+ * | ESC       |   1  |   2  |   3  |   4  |   5  |   6  |           |MOUSE |   7  |   8  |   9  |  0   | - _  |   = +     |
+ * |-----------+------+------+------+------+-------------|           |------+------+------+------+------+------+-----------|
+ * |  `  ~     |   Q  |   W  |   E  |   R  |   T  |M_TLDR|           | CAPS |   Y  |   U  |   I  |   O  |   P  |   \  |    |
+ * |-----------+------+------+------+------+------|      |           |      |------+------+------+------+------+-----------|
+ * |  TAB      |   A  |   S  |   D  |   F  |   G  |------|           |------|   H  |   J  |   K  |   L  |   ;  |   ' "     |
+ * |-----------+------+------+------+------+------| [{   |           | ]}   |------+------+------+------+------+-----------|
+ * |  LShift   |   Z  |   X  |   C  |   V  |   B  |(Hyper|           |Hyper)|   N  |   M  |   ,  |   .  |   /  |   RShift  |
+ * `-----------+------+------+------+------+-------------'           `-------------+------+------+------+------+-----------'
+ *     | FN    |M_RFI |LCtrl | LAlt | LGui |                                       | RGui | RAlt | RCtrl|   ]  |    FN |
+ *     |       |      |      |      |      |                                       |      |      |  / [ |      |       |
+ *     `-----------------------------------'                                       `-----------------------------------'
+ *                                         ,-------------.           ,-------------.
+ *                                         |M_TPST| DEL  |           | HOME | END  |
+ *                                  ,------|------|------|           |------+------+------.
+ *                                  |      |      |M_CLPT|           | PgUp |      |      |
+ *                                  |Backsp| TAB  |------|           |------| Enter| Space|
+ *                                  |      |      |  FN  |           | PgDn |      |      |
+ *                                  `--------------------'           `--------------------'
+*/
+[BASE]=LAYOUT_ergodox(//left half
+              KC_ESC,         KC_1,       KC_2,     KC_3,           KC_4,       KC_5,        KC_6,
+              KC_GRV,         KC_Q,       KC_W,     KC_E,           KC_R,       ALT_T(KC_T),        M_TLDR,
+              KC_TAB,         KC_A,       KC_S,     KC_D,           KC_F,       KC_G,
+              OSM(MOD_LSFT),   KC_Z,       KC_X,     KC_C,           SFT_T(KC_V),CTL_T(KC_B),ALL_T(KC_LBRC),
+              OSL(FN),        M_RFI,      KC_LCTRL, KC_LALT,        KC_LGUI,
+                                                                                M_TPST,   KC_DEL,
+                                                                                          M_CLPT,
+                                                                    KC_BSPC,    KC_TAB,   MO(FN),
+              //right half
+              TG(MOUSE),      KC_7,       KC_8,       KC_9,           KC_0,       KC_MINS,  KC_EQL,
+              KC_CAPS,        ALT_T(KC_Y),KC_U,       KC_I,           KC_O,       KC_P,     KC_BSLS,
+                              KC_H,       KC_J,       KC_K,           KC_L,       KC_SCLN,  KC_QUOT,
+              ALL_T(KC_RBRC), CTL_T(KC_N),SFT_T(KC_M),KC_COMM,        KC_DOT,     KC_SLSH,  KC_RSFT,
+                              KC_RGUI,    KC_RALT,    CTL_T(KC_LBRC), KC_RBRC,    OSL(FN),
+              KC_HOME,        KC_END,
+              KC_PGUP,
+              KC_PGDN,        KC_ENT,     KC_SPC),
+
+/* Keymap 1: KeyPad Layer
+ *
+ * ,-----------------------------------------------------.           ,-----------------------------------------------------.
+ * |           |      |      |      |      |      |      |           | BASE |      |      |      |      |      |           |
+ * |-----------+------+------+------+------+-------------|           |------+------+------+------+------+------+-----------|
+ * |           |      | MClk | RClk | LClk |      |      |           |      |      | LClk | RClk | MClk |      |           |
+ * |-----------+------+------+------+------+------|      |           |      |------+------+------+------+------+-----------|
+ * |           |      |      |      |      |      |------|           |------|   L  |   D  |   U  |   R  |      |           |
+ * |-----------+------+------+------+------+------|      |           |      |------+------+------+------+------+-----------|
+ * |           |      |      |      |      |      |      |           |      |ScrlL |ScrlD |ScrlU |ScrlR |      |           |
+ * `-----------+------+------+------+------+-------------'           `-------------+------+------+------+------+-----------'
+ *     |  XXXX | XXXX | XXXX | XXXX | XXXX |                                       | XXXX | XXXX | XXXX | XXXX | XXXX  |
+ *     `-----------------------------------'                                       `-----------------------------------'
+ *                                         ,-------------.           ,-------------.
+ *                                         |      |      |           | XXXX | XXXX |
+ *                                  ,------|------|------|           |------+------+------.
+ *                                  |      |      |      |           | XXXX | XXXX | XXXX |
+ *                                  |      |      |------|           |------| XXXX | XXXX |
+ *                                  |      |      |      |           | XXXX | XXXX | XXXX |
+ *                                  `--------------------'           `--------------------'
+ */
+[MOUSE]=LAYOUT_ergodox(//left half
+                KC_NO,   KC_NO,   KC_NO,        KC_NO,        KC_NO,      KC_NO,   KC_NO,
+                KC_NO,   KC_NO,   KC_MS_BTN2,   KC_MS_BTN2,   KC_MS_BTN1, KC_NO,   KC_NO,
+                KC_NO,   KC_NO,   KC_NO,        KC_NO,        KC_NO,      KC_NO,
+                KC_NO,   KC_NO,   KC_NO,        KC_NO,        KC_NO,      KC_NO,   KC_NO,
+                                  KC_TRNS,      KC_TRNS,      KC_TRNS,    KC_TRNS, KC_TRNS,
+                                                                          KC_NO,    KC_NO,
+                                                                                    KC_NO,
+                                                                   KC_NO, KC_NO,    KC_TRNS,
+                //right half
+                KC_TRNS,KC_NO,         KC_NO,         KC_NO,          KC_NO,          KC_NO,   KC_NO,
+                KC_NO,  KC_NO,         KC_MS_BTN1,    KC_MS_BTN2,     KC_MS_BTN3,     KC_NO,   KC_NO,
+                        KC_MS_L,       KC_MS_D,       KC_MS_U,        KC_MS_R,        KC_NO,   KC_NO,
+                KC_NO,  KC_MS_WH_LEFT, KC_MS_WH_DOWN, KC_MS_WH_UP,    KC_MS_WH_RIGHT, KC_NO,   KC_NO,
+                                       KC_TRNS,       KC_TRNS,        KC_TRNS,        KC_TRNS, KC_TRNS,
+                KC_TRNS, KC_TRNS,
+                KC_TRNS,
+                KC_TRNS, KC_TRNS,  KC_TRNS),
+
+/* Keymap 2: Functions Layer
+ *
+ * ,-----------------------------------------------------.           ,-----------------------------------------------------.
+ * |           |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |           | BASE |  F7  |  F8  |  F9  |  F10 |  F11 |    F12    |
+ * |-----------+------+------+------+------+-------------|           |------+------+------+------+------+------+-----------|
+ * |           | Stop |  Rw  |  Rec |  FF  |      | XXXX |           | PgUp | Home | End  |      |      |      |           |
+ * |-----------+------+------+------+------+------| XXXX |           |      |------+------+------+------+------+-----------|
+ * |  CapsLock | Eject| Prev | Play | Next |      |------|           |------| Left | Down |  Up  | Right|      |           |
+ * |-----------+------+------+------+------+------| XXXX |           | PgDn |------+------+------+------+------+-----------|
+ * |  L Shift  |      |      |      |      |      | XXXX |           |      |      |      |      |      |      |           |
+ * `-----------+------+------+------+------+-------------'           `-------------+------+------+------+------+-----------'
+ *     | XXXXX |      | XXXX | XXXX | XXXX |                                       | XXXX | XXXX | XXXX |      | XXXXX |
+ *     `-----------------------------------'                                       `-----------------------------------'
+ *                                         ,-------------.           ,-------------.
+ *                                         |      |      |           | Mute |Ply/Ps|
+ *                                  ,------|------|------|           |------+------+------.
+ *                                  |      |      |      |           | VolUp|      |      |
+ *                                  |      |      |------|           |------|      |      |
+ *                                  |      |      |      |           | VolDn|      |      |
+ *                                  `--------------------'           `--------------------'
+ *
+ * XXX = These keys are transparent keys that, when pressed, they issue the key from the previous layer.
+ */
+[FN]=LAYOUT_ergodox(//left half
+            KC_NO,   KC_F1,          KC_F2,               KC_F3,               KC_F4,                 KC_F5,  KC_F6,
+            KC_NO,   KC_MEDIA_STOP,  KC_MEDIA_REWIND,     KC_MEDIA_SELECT,     KC_MEDIA_FAST_FORWARD, KC_NO,  KC_TRNS,
+            KC_CAPS, KC_MEDIA_EJECT, KC_MEDIA_PREV_TRACK, KC_MEDIA_PLAY_PAUSE, KC_MEDIA_NEXT_TRACK,   KC_NO,
+            KC_LSFT, KC_NO,          KC_NO,               KC_NO,               KC_NO,                 KC_NO,  KC_TRNS,
+            KC_TRNS, KC_NO,          KC_TRNS,             KC_TRNS,             KC_TRNS,
+                                                                                                      KC_NO,  KC_NO,
+                                                                                                              KC_NO,
+                                                                               KC_NO,                 KC_NO,  KC_NO,
+            //right half
+            TG(BASE),KC_F7,          KC_F8,               KC_F9,               KC_F10,                KC_F11, KC_F12,
+            KC_PGUP, KC_HOME,        KC_END,              KC_NO,               KC_NO,                 KC_NO,  KC_NO,
+                     KC_LEFT,        KC_DOWN,             KC_UP,               KC_RIGHT,              KC_NO,  KC_NO,
+            KC_PGDN, KC_NO,          KC_NO,               KC_NO,               KC_NO,                 KC_NO,  KC_NO,
+                     KC_TRNS,        KC_TRNS,             KC_TRNS,             KC_NO,                 KC_TRNS,
+            KC_MUTE,   KC_MEDIA_PLAY_PAUSE,
+            KC_VOLU,
+            KC_VOLD,   KC_NO,               KC_NO)};
+
+// Runs just one time when the keyboard initializes.
+void keyboard_post_init_user(void) {
+  rgblight_disable();
+};
+
+uint8_t current_layer = BASE;
+
+// Runs constantly in the background, in a loop.
+void matrix_scan_user(void) {
+  uint8_t layer = biton32(layer_state);
+
+  ergodox_led_all_off();
+  ergodox_led_all_set(LED_BRIGHTNESS_LO);
+
+  switch (layer) {
+  case BASE:
+    current_layer = BASE;
+    break;
+  case MOUSE:
+    current_layer = MOUSE;
+    break;
+  default:
+    // none
+    break;
+  }
+
+  // layer leds
+  if (current_layer == MOUSE) {
+    ergodox_right_led_3_on();
+  }
+
+  // capslock
+  if (host_keyboard_leds() & (3<<USB_LED_CAPS_LOCK)) {
+    ergodox_right_led_1_on();
+  }
+
+  // Temporary leds
+
+  // The function layer takes over other layers and we need to reflect that on the leds.
+  // If the current layer is the BASE, we simply turn on the FN led, but if the current
+  // layer is the MOUSE, than we must turn it off before turning on the FN led.
+  if (layer == FN && !has_oneshot_layer_timed_out()) {
+    ergodox_right_led_3_off();
+    ergodox_right_led_2_on();
+  }
+
+  // if the shifted is pressed I show the case led in a brighter color. This is nice to
+  // differenciate the shift from the capslock.
+  // Notice that I make sure that we're not using the shift on a chord shortcut (pressing
+  // shift togather with other modifiers).
+  if((keyboard_report->mods & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT)) &&                                 // is shift pressed and there is no other
+      !(keyboard_report->mods & (~MOD_BIT(KC_LSFT) & ~MOD_BIT(KC_RSFT)))) ||                           //    modifier being pressed as well
+     (get_oneshot_mods() & (MOD_BIT(KC_LSFT) | MOD_BIT(KC_RSFT)) && !has_oneshot_mods_timed_out())) {  // or the one shot shift didn't timed out
+    ergodox_right_led_1_set(LED_BRIGHTNESS_HI);
+    ergodox_right_led_1_on();
+  }
+};
